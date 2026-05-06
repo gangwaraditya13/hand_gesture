@@ -85,6 +85,7 @@ class ActionController:
             return
             
         self.last_gesture = gesture
+        print(f"Gesture Executed: {gesture}")
         
         if gesture == "Peace Sign":
             pyautogui.press('nexttrack')

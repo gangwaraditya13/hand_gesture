@@ -15,7 +15,7 @@ class GestureRecognizer:
 
         # Thumb (Simple heuristic based on x/y coordinates)
         # Using x coordinates for right hand facing camera
-        # If the thumb tip x is to the left of the thumb base (for right hand), it's open.
+        # If the thumb tip x is to the left of the thumb   base (for right hand), it's open.
         # But this might fail on left hand. We'll use a simpler condition: 
         # distance from wrist to tip vs wrist to joint
         if lm_list[self.tip_ids[0]][1] > lm_list[self.tip_ids[0] - 1][1]:

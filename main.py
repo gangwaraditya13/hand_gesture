@@ -27,26 +27,26 @@ class GestureApp:
         # We need screen dimensions for PyAutoGUI
         w_scr, h_scr = pyautogui.size()
         self.controller = ActionController(w_scr, h_scr)
-        
+         
         self.cap = None
         self.thread = None
 
     def setup_ui(self):
         ttk.Label(self.root, text="Select Control Mode:", font=("Arial", 12)).pack(pady=10)
-        
+         
         modes = [
             ("No Action / Debug", "None"),
             ("Cursor Control", "Cursor"),
             ("Volume Control", "Volume"),
             ("Media Commands", "Commands")
         ]
-        
+         
         for text, mode in modes:
             ttk.Radiobutton(self.root, text=text, variable=self.active_mode, value=mode).pack(anchor=tk.W, padx=40)
             
         self.start_btn = ttk.Button(self.root, text="Start Camera", command=self.toggle_camera)
         self.start_btn.pack(pady=20)
-        
+         
     def toggle_camera(self):
         if self.running:
             self.running = False
@@ -60,7 +60,7 @@ class GestureApp:
             self.thread = threading.Thread(target=self.run_camera_loop)
             self.thread.daemon = True
             self.thread.start()
-            
+             
     def run_camera_loop(self):
         self.cap = cv2.VideoCapture(0)
         w_cam, h_cam = 640, 480
@@ -77,15 +77,15 @@ class GestureApp:
             lm_list = self.tracker.get_landmarks(img, draw=False)
             
             mode = self.active_mode.get()
-            
+               
             if len(lm_list) != 0:
                 fingers = self.recognizer.fingers_up(lm_list)
                 gesture = self.recognizer.recognize_gesture(fingers)
-                
+                    
                 # Draw Gesture Text
                 cv2.putText(img, f'Gesture: {gesture}', (10, 30), cv2.FONT_HERSHEY_PLAIN, 1.5, (255, 0, 0), 2)
                 cv2.putText(img, f'Mode: {mode}', (10, 60), cv2.FONT_HERSHEY_PLAIN, 1.5, (0, 255, 0), 2)
-                
+                   
                 # Execute actions based on selected mode
                 if mode == "Cursor":
                     # Index finger moving
@@ -94,14 +94,14 @@ class GestureApp:
                         # Account for mirroring of the image in coordinates!
                         self.controller.move_cursor(w_cam - x1, y1, w_cam, h_cam)
                         cv2.circle(img, (x1, y1), 10, (255, 0, 255), cv2.FILLED)
-                        
+                            
                     # Clicking (Index and Middle fingers are up and close)
                     if fingers[1] == 1 and fingers[2] == 1:
                         length, line_info, center = self.recognizer.get_distance(8, 12, lm_list)
                         if length < 40:
                             cv2.circle(img, (center[0], center[1]), 15, (0, 255, 0), cv2.FILLED)
                             self.controller.click()
-                            
+                               
                 elif mode == "Volume":
                     # Thumb and Index distance
                     if fingers[0] == 1 and fingers[1] == 1:
